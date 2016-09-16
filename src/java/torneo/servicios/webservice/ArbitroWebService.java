@@ -61,8 +61,8 @@ public class ArbitroWebService {
         return band;
     }
 
-    @WebMethod(operationName = "buscarPorId")
-    public Arbitro buscarPorId(@WebParam(name = "id") int id) throws Exception {
+    @WebMethod(operationName = "Buscar")
+    public Arbitro buscarArbitroPorId(@WebParam(name = "id") int id) throws Exception {
         Arbitro arbitro = new Arbitro();
         try {
             arbitro = ServiciosArbitro.obtenerArbitroPorId(id);

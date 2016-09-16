@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>
+            <ui:define name="tituloNavegador">
+                Reportes
+            </ui:define>
+        </title>
+    </h:head>
+
+    <h:body>
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Arbitros
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmReportes">
+                    <p:panel id="pnlReportes">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Reporte"/>
+                            <p:outputLabel value="Enlace"/>
+                            <p:outputLabel value="Jugadores"/>
+                            <h:commandLink id="reportJugadores" target="_blank" value="reporte" 
+                                           actionListener="#{ctrlReporteJugadores.verReporte()}" title="Ver reporte de Jugadores"/>  
+                            <p:outputLabel value="Equipos"/>
+                            <h:commandLink id="reportEquipos" target="_blank" value="reporte" 
+                                           actionListener="#{ctrlReporteEquipos.verReporte()}" title="Ver reporte de Equipos"/>  
+                            <p:outputLabel value="Grupos - Equipos"/>
+                            <h:commandLink id="reportGruposEquipos" target="_blank" value="reporte" 
+                                           actionListener="#{ctrlReporteEquiposGrupo.verReporte()}" title="Ver reporte de Equipos"/>  
+                        </p:panelGrid>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">
+               
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

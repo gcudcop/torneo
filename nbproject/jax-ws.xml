@@ -7,6 +7,21 @@
     <service name="PartidoWebService">
       <implementation-class>torneo.servicios.webservice.PartidoWebService</implementation-class>
     </service>
+    <service name="TestWebService">
+      <implementation-class>torneo.servicios.webservice.TestWebService</implementation-class>
+    </service>
+    <service name="TorneoWebService">
+      <implementation-class>torneo.servicios.webservice.TorneoWebService</implementation-class>
+    </service>
+    <service name="CanchaWebService">
+      <implementation-class>torneo.servicios.webservice.CanchaWebService</implementation-class>
+    </service>
+    <service name="JugadorPosicionWebService">
+      <implementation-class>torneo.servicios.webservice.JugadorPosicionWebService</implementation-class>
+    </service>
+    <service name="GrupoWebService">
+      <implementation-class>torneo.servicios.webservice.GrupoWebService</implementation-class>
+    </service>
   </services>
   <clients/>
 </jax-ws>

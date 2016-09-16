@@ -124,17 +124,47 @@ public class ServiciosEquipo {
         return equipo;
     }
      
-     public static ArrayList<Equipo> obtenerEquiposDadoGrupo(int criterio) throws Exception {
+     
+     public static ArrayList<Equipo> obtenerEquiposPorNombre(String criterio) throws Exception {
         ArrayList<Equipo> lst = new ArrayList<Equipo>();
         try {
             ArrayList<Parametro> lstP = new ArrayList<Parametro>();
-            String sql = "select * from torneo.f_select_equipo_dado_id_grupo(?)";
+            String sql = "select * from torneo.f_select_equipo_dado_nombre(?)"; //revisar este procedimiento almacenado no esta
             lstP.add(new Parametro(1, criterio));
             ConjuntoResultado rs = AccesoDatos.ejecutaQuery(sql, lstP);
             lst = llenarDatos(rs);
             rs = null;
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+        return lst;
+    }
+     
+     public static ArrayList<Equipo> obtenerEquiposDadoGrupo(int criterio) throws Exception {
+        ArrayList<Equipo> lst = new ArrayList<Equipo>();
+        try {
+            ArrayList<Parametro> lstP = new ArrayList<Parametro>();
+            String sql = "select * from torneo.f_select_equipo_dado_id_grupo(?)"; //revisar este procedimiento almacenado no esta
+            lstP.add(new Parametro(1, criterio));
+            ConjuntoResultado rs = AccesoDatos.ejecutaQuery(sql, lstP);
+            lst = llenarDatos(rs);
+            rs = null;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return lst;
+    }
+     
+     
+     public static ArrayList<Equipo> obtenerEquiposPorGrupos() throws Exception {
+        ArrayList<Equipo> lst = new ArrayList<Equipo>();
+        try {
+            String sql = "select * from torneo.f_select_equipo_por_grupos()";
+            ConjuntoResultado rs = AccesoDatos.ejecutaQuery(sql);
+            lst = llenarDatos(rs);
+            rs = null;
+        } catch (SQLException exConec) {
+            throw new Exception(exConec.getMessage());
         }
         return lst;
     }

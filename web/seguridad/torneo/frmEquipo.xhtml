@@ -1,12 +1,194 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Facelet Title</title>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Equipos
+            </ui:define>
+        </title>
     </h:head>
+
     <h:body>
-        Hello from Facelets
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Equipos
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmEquipo">
+                    <p:panel id="pnlBusquedas">
+                        <p:outputLabel value="Búsquedas"/>
+                        <p:separator/>
+                        <p:panelGrid columns="4">
+                            <p:outputLabel value="Nombre:"/>
+                            <p:inputText value="#{ctrlEquipo.criterioBusqueda}"/>
+                            <p:commandButton title="Buscar" icon="ui-icon-search" action="#{ctrlEquipo.obtenerEquiposPorNombre()}"
+                                             update=":frmEquipo:pnlEquipos"/>
+                            <p:commandButton title="Limpiar" icon="ui-icon-clean" action="#{ctrlEquipo.obtenerEquipos()}" 
+                                             update=":frmEquipo:pnlEquipos"/>
+                        </p:panelGrid>
+
+                    </p:panel>
+                    <p:panel id="pnlEquipos">                                            
+                        <p:dataTable id="tblEquipos" value="#{ctrlEquipo.lstEquipos}" var="equipos" rows="5" paginator="true" 
+                                     selectionMode="single" selection="#{ctrlEquipo.selEquipo}" rowKey="#{equipos.idEquipo}">
+                            <f:facet name="header">
+                                <p:outputLabel value="Equipos"/>
+                            </f:facet>                        
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Nombre"/>
+                                </f:facet>
+                                <p:outputLabel value="#{equipos.nombre}"/>
+                            </p:column>
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Procedencia"/>
+                                </f:facet>
+                                <p:outputLabel value="#{equipos.procedencia}"/>
+                            </p:column>
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Fecha"/>
+                                </f:facet>
+                                <p:outputLabel value="#{equipos.fechaCreacion}"/>
+                            </p:column>
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Grupo"/>
+                                </f:facet>
+                                <p:outputLabel value="#{equipos.idGrupo.nombreGrupo}"/>
+                            </p:column>
+
+
+                            <p:column exportable="false">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Acciones"/>
+                                </f:facet>                            
+                                <p:commandButton title="Actualizar" icon="ui-icon-pencil" oncomplete="wdlgEditarEquipo.show()" 
+                                                 update=":dlgEditarEquipo" process="@this">
+                                    <f:setPropertyActionListener value="#{equipos}" target="#{ctrlEquipo.selEquipo}"/>
+                                </p:commandButton>
+
+                                <p:commandButton title="Eliminar" icon="ui-icon-trash" oncomplete="wdlgEliminarEquipo.show()" 
+                                                 update=":dlgEliminarEquipo" process="@this">
+                                    <f:setPropertyActionListener value="#{equipos}" target="#{ctrlEquipo.selEquipo}"/>
+                                </p:commandButton>
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoEquipo.show();"/>
+                                <h:commandLink>
+                                    <img src="../../resources/images/excel.png" alt=""/>
+                                    <p:dataExporter pageOnly="false" type="xls" fileName="Grupos" target="tblGrupos"/>
+                                </h:commandLink>
+
+                            </f:facet>
+
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">
+
+                <p:dialog id="dlgNuevoEquipo" header="Nuevo Equipo" widgetVar="wdlgNuevoEquipo" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoEquipo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtNombre" for="txtNombre" value="Nombre"/>
+                            <p:inputText id="txtNombre" value="#{ctrlEquipo.objEquipo.nombre}" required="true" placeholder="Ej. Barcelona"/>
+
+                            <p:outputLabel id="otxtProcedencia" for="txtProcedencia" value="Procedencia"/>
+                            <p:inputText id="txtProcedencia" value="#{ctrlEquipo.objEquipo.procedencia}" required="true" placeholder="Ej. Guayaquil"/>
+
+                            <p:outputLabel value="Fecha:"/>
+                            <p:calendar id="txtFecha" value="#{ctrlEquipo.fecha}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+
+
+                            <p:outputLabel value="Grupo" />
+                            <p:selectOneMenu id="txtGrupo" label="Grupo" requiredMessage="Ingrese el Grupo" value="#{ctrlEquipo.idGrupo}" required="true">
+                                <f:selectItem itemLabel="Seleccione un Grupo" noSelectionOption="true"/>
+                                <f:selectItems value="#{ctrlEquipo.lstGrupos}" var="grupo" itemLabel="#{grupo.nombreGrupo}" itemValue="#{grupo.idGrupo}"/>
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlEquipo.insertar()}" 
+                                         update=":frmEquipo:pnlEquipos" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoEquipo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog> 
+
+                <p:dialog id="dlgEditarEquipo" header="Editar Equipo" widgetVar="wdlgEditarEquipo" 
+                          modal="true" closable="false" resizable="true" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEditarEquipo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:messages id="messages" autoUpdate="true"/>  
+                        <p:panelGrid columns="2">
+
+                            <p:outputLabel value="Nombre:"/>
+                            <p:inputText value="#{ctrlEquipo.selEquipo.nombre}"/>   
+
+                            <p:outputLabel value="Procedencia:"/>
+                            <p:inputText value="#{ctrlEquipo.selEquipo.procedencia}"/>  
+
+                            <p:outputLabel value="Fecha:"/>
+                            <p:calendar id="txtFecha" value="#{ctrlEquipo.fecha}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+
+
+                            <p:outputLabel value="Seleccione el grupo:"/>
+                            <p:selectOneMenu id="cmbGrupo" value="#{ctrlEquipo.idGrupo}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlEquipo.lstGrupos}" var="grupos" itemLabel="#{grupos.nombreGrupo} #{grupos.idTorneo.descripcion}" 
+                                                  itemValue="#{grupos.idGrupo}"/>
+                                </p:selectOneMenu>
+
+                        </p:panelGrid>
+
+                        <p:commandButton value="Aceptar" action="#{ctrlEquipo.editarEquipo()}" 
+                                         update=":frmEquipo:pnlEquipos"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarEquipo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog id="dlgEliminarEquipo" header="Eliminar Equipo" widgetVar="wdlgEliminarEquipo" 
+                          modal="true" closable="false" resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarEquipo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <h:outputText value="¿Desea Eliminar el Equipo?"/>
+                        <p:panelGrid id="pngEliminarEquipo" columns="2">
+                            <h:outputText value="Nombre:"/>
+                            <h:outputText value="#{ctrlEquipo.selEquipo.nombre}"/>
+
+                            <h:outputText value="Procedencia:"/>
+                            <h:outputText value="#{ctrlEquipo.selEquipo.procedencia}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlEquipo.eliminarEquipo()}" 
+                                         update=":frmEquipo:pnlEquipos"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarEquipo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
     </h:body>
 </html>
-

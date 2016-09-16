@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e665a261-116e-40c9-a0cd-82c0ec12ae66">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     jugador."nombres" AS Nombres,
+     jugador."apellidos" AS Apellidos,
+     jugador."fecha_nacimiento" AS Fecha_Nacimiento,
+     equipo."nombre_equipo" AS Equipo,
+     posicion."descripcion" AS Posicion,
+     jugador_posicion."dorsal" AS Dorsal
+FROM
+     "torneo"."equipo" equipo INNER JOIN "torneo"."jugador" jugador ON equipo."id_equipo" = jugador."id_equipo"
+     INNER JOIN "torneo"."jugador_posicion" jugador_posicion ON jugador."id_jugador" = jugador_posicion."id_jugador"
+     INNER JOIN "torneo"."posicion" posicion ON jugador_posicion."id_posicion" = posicion."id_posicion"]]>
+	</queryString>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="apellidos" class="java.lang.String"/>
+	<field name="fecha_nacimiento" class="java.sql.Date"/>
+	<field name="equipo" class="java.lang.String"/>
+	<field name="posicion" class="java.lang.String"/>
+	<field name="dorsal" class="java.lang.Integer"/>
+	<group name="equipo">
+		<groupExpression><![CDATA[$F{equipo}]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="100" height="32" forecolor="#666666" backcolor="#E6E6E6" uuid="f4a04fec-5283-4aff-aecd-74d01be32738"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[Equipo]]></text>
+				</staticText>
+				<textField>
+					<reportElement mode="Opaque" x="100" y="0" width="455" height="32" forecolor="#006699" backcolor="#E6E6E6" uuid="8b92c147-c50f-4b63-a890-0723a60484f0"/>
+					<textElement>
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{equipo}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="-20" y="32" width="595" height="1" forecolor="#666666" uuid="f3d003ec-63e8-409c-bc01-e95791ac968c"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="9d800637-9118-4764-8980-0bcacecedeab"/>
+				<staticText>
+					<reportElement x="20" y="20" width="349" height="43" forecolor="#FFFFFF" uuid="d988f903-b80f-4386-ae61-305b3c13d5fb"/>
+					<textElement>
+						<font size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Listado de Jugadores]]></text>
+				</staticText>
+				<image>
+					<reportElement x="481" y="6" width="105" height="40" uuid="c3e6c6e1-da12-42e4-9eac-851d5e47f8a3"/>
+					<imageExpression><![CDATA["C:\\Users\\Usuario\\Documents\\NetBeansProjects\\torneo\\web\\resources\\images\\logo_cabecera.png"]]></imageExpression>
+				</image>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="376a7f4f-d2df-460c-92d2-c6b7c07adb27"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="81" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="fdb5b5fd-724c-45a0-a279-82ec41a3eb30"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombres]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="81" y="0" width="124" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="1b51166a-bc29-4789-b2fe-dd76df44b386"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Apellidos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="205" y="0" width="128" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="f53911d5-c0ec-409a-9a5b-a7bdc7586c20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de Nacimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="333" y="0" width="111" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="491ae3f0-7ac7-4d9f-97e5-839d26563c98"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Posicion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="444" y="0" width="111" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="6c50925c-776e-4537-8b00-e720067b35fa"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dorsal]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="cb087061-9837-4921-9d38-f08f0b6d0c7c"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="81" height="20" uuid="f0dd4981-9dac-4e5a-ac4e-5886be3e89ed"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombres}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="81" y="0" width="124" height="20" uuid="b4f54169-12e2-4d29-838c-a7f4b96f28bb"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{apellidos}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="222" y="0" width="111" height="20" uuid="8ddcbf55-d054-44c5-bac9-1d9d504b9e21"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_nacimiento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="333" y="0" width="111" height="20" uuid="1581e845-c285-4f01-b698-7636d5a865d7"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="444" y="0" width="111" height="20" uuid="ee278890-f3c3-4807-95f7-9f273a26c4d3"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dorsal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="b59b066e-f871-474b-b2c2-ba54890f1442"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="d779a5d1-8f52-44a3-854b-2bda59a62da9"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="5b396f36-2a58-4752-aed3-ce167964d17d"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>
