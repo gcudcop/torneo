@@ -26,26 +26,49 @@ and open the template in the editor.
             <ui:define name="contenido">
                 <p:growl autoUpdate="true" showDetail="true"/>
                 <h:form id="frmReportes">
-                    <p:panel id="pnlReportes">
-                        <p:panelGrid columns="2">
+                    <p:panel id="pnlReportes" header="Reportes">
+                        <p:outputLabel value="Reportes disponibles..."/>
+                        <p:separator/>
+                        <p:panelGrid columns="4">
                             <p:outputLabel value="Reporte"/>
-                            <p:outputLabel value="Enlace"/>
+                            <p:graphicImage value="/resources/images/pdf.png"/> 
+                             <p:graphicImage value="/resources/images/excel.png"/> 
+                             <p:graphicImage value="/resources/images/word.png"/> 
                             <p:outputLabel value="Jugadores"/>
                             <h:commandLink id="reportJugadores" target="_blank" value="reporte" 
                                            actionListener="#{ctrlReporteJugadores.verReporte()}" title="Ver reporte de Jugadores"/>  
+                            <h:commandLink id="Excel" value="Excel" actionListener="#{ctrlReporteJugadores.verReporteExcel()}" 
+                                           title="Ver reporte de clientes"/>
+                            <h:commandLink id="Word" value="Word" actionListener="#{ctrlReporteJugadores.verReporteWord()}" 
+                                           title="Ver reporte de clientes"/>
                             <p:outputLabel value="Equipos"/>
                             <h:commandLink id="reportEquipos" target="_blank" value="reporte" 
                                            actionListener="#{ctrlReporteEquipos.verReporte()}" title="Ver reporte de Equipos"/>  
+                             <h:commandLink id="ExcelEquipos" value="Excel" actionListener="#{ctrlReporteEquipos.verReporteExcel()}" 
+                                            title="Ver reporte de clientes"/>
+                             <h:commandLink id="WordEquipos" value="Word" actionListener="#{ctrlReporteEquipos.verReporteWord()}" 
+                                           title="Ver reporte de clientes"/>
                             <p:outputLabel value="Grupos - Equipos"/>
                             <h:commandLink id="reportGruposEquipos" target="_blank" value="reporte" 
                                            actionListener="#{ctrlReporteEquiposGrupo.verReporte()}" title="Ver reporte de Equipos"/>  
+                             <h:commandLink id="ExcelGrupos" value="Excel" actionListener="#{ctrlReporteEquiposGrupo.verReporteExcel()}" 
+                                            title="Ver reporte de clientes"/>
+                             <h:commandLink id="WordGruposEquipos" value="Word" actionListener="#{ctrlReporteEquiposGrupo.verReporteWord()}" 
+                                           title="Ver reporte de clientes"/>
+                             <p:outputLabel value="Arbitros"/>
+                            <h:commandLink id="reportArbitros" target="_blank" value="reporte" 
+                                           actionListener="#{ctrlReporteArbitro.verReporte()}" title="Ver reporte de Equipos"/>  
+                             <h:commandLink id="ExcelArbitros" value="Excel" actionListener="#{ctrlReporteArbitro.verReporteExcel()}" 
+                                            title="Ver reporte de clientes"/>
+                             <h:commandLink id="WordArbitros" value="Word" actionListener="#{ctrlReporteArbitro.verReporteWord()}" 
+                                           title="Ver reporte de clientes"/>
                         </p:panelGrid>
                     </p:panel>
                 </h:form>
             </ui:define>
 
             <ui:define name="dialogos">
-               
+
                 <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
                           resizable="false"> 
                     <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  

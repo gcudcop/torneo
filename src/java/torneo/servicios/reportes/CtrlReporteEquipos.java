@@ -31,5 +31,31 @@ public class CtrlReporteEquipos {
         reportes.getReporte(ruta);
         FacesContext.getCurrentInstance().responseComplete();
     }
+    
+    public void verReporteExcel() throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+
+        //Instancia hacia la clase reporteClientes        
+        ReporteArbitro reporteArbitro = new ReporteArbitro();
+
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+        String ruta = servletContext.getRealPath("/reportes/reportEquipos.jasper");
+
+        reporteArbitro.getReporteExcel(ruta);
+        FacesContext.getCurrentInstance().responseComplete();
+    }
+    
+    public void verReporteWord() throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        
+        //Instancia hacia la clase reporteClientes        
+       ReporteArbitro reporteArbitro = new ReporteArbitro();
+        
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+        String ruta = servletContext.getRealPath("/reportes/reportEquipos.jasper");
+       
+        reporteArbitro.getReporteWord(ruta);        
+        FacesContext.getCurrentInstance().responseComplete();               
+    }
 
 }

@@ -12,7 +12,7 @@ and open the template in the editor.
     <h:head>
         <title>
             <ui:define name="tituloNavegador">
-                Gestión de Arbitros
+                Gestión de Partidos
             </ui:define>
         </title>
     </h:head>
@@ -84,8 +84,12 @@ and open the template in the editor.
                                     <f:setPropertyActionListener value="#{partidos}" target="#{ctrlPartido.partidoSel}"/>
                                 </p:commandButton>
                             </p:column>
-                            <f:facet name="footer">
+                            <f:facet name="footer">                                
                                 <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoPartido.show();"/>
+                                 <h:commandLink>
+                                    <img src="../../resources/images/excel.png" alt=""/>
+                                    <p:dataExporter pageOnly="false" type="xls" fileName="Partidos" target="tblPartidos"/>
+                                </h:commandLink>
                             </f:facet>
 
                         </p:dataTable>                                     

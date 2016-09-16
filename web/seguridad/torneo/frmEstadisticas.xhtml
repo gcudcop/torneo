@@ -7,7 +7,7 @@
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>
-            <ui:define name="Datos">Sección 3: Pregunta 2</ui:define>
+            <ui:define name="Datos">Estadisticas</ui:define>
         </title>
     </h:head>
     <h:body>
@@ -19,21 +19,21 @@
                     <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();" />
                     <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();" />
 
-                    <p:panel id="pnlGraficos" header="Capacidad para trabajar en un equipo multidisciplinario asumiendo diferentes roles cuando sea necesario" >
+                    <p:panel id="pnlGraficos" header="Estadísticas" >
 
                         <p:accordionPanel style="max-height: 800px;max-width: 1200px">
 
-                            <p:tab title="Líder" >
+                            <p:tab title="Total de Equipos por Grupos" >
                                 <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>                                
                                 <h:outputScript  library="jqplot-plugins" name="jqplot.pointLabels.min.js" />
                                 <p:panelGrid columns="2">                                     
                                      
                                     <p:barChart   value="#{ctrlEstadisticas.lineModel}"  
-                                                  title="Lado A" style="height:350px;width:475px;text-decoration-style: dashed"
-                                                  xaxisAngle="90" yaxisLabel="# Graduados" animate="true"/>                                                                             
+                                                  style="height:350px;width:475px;text-decoration-style: dashed"
+                                                  xaxisAngle="90" yaxisLabel="#Equipos" animate="true"/>                                                                             
                                     
                                     <p:pieChart   value="#{ctrlEstadisticas.pieModel}" legendPosition="e" showDataLabels="true"
-                                                  title="Lado A" style="height:300px;width:475px;text-decoration-style: dashed"/>  
+                                                  style="height:300px;width:475px;text-decoration-style: dashed"/>  
                                 </p:panelGrid>
                             </p:tab>  
 
