@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Canchas
+            </ui:define>
+        </title>
+    </h:head>
+
+    <h:body>
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Canchas
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmCancha">
+                    <p:panel id="pnlBusquedas">
+                        <p:outputLabel value="Búsquedas"/>
+                        <p:separator/>
+                        <p:panelGrid columns="4">
+                            <p:outputLabel value="Descripción:"/>
+                            <p:inputText value="#{ctrlCancha.criterioBusqueda}"/>
+                            <p:commandButton title="Buscar" icon="ui-icon-search" action="#{ctrlCancha.obtenerCanchasPorNombre()}"
+                                             update=":frmCancha:pnlCanchas"/>
+                            <p:commandButton title="Limpiar" icon="ui-icon-clean" action="#{ctrlCancha.obtenerCanchas()}" 
+                                             update=":frmCancha:pnlCanchas"/>
+                        </p:panelGrid>
+
+                    </p:panel>
+                    <p:panel id="pnlCanchas">                                            
+                        <p:dataTable id="tblCanchas" value="#{ctrlCancha.lstCanchas}" var="canchas" rows="5" paginator="true" 
+                                     selectionMode="single" selection="#{ctrlCancha.selCancha}" rowKey="#{canchas.idCancha}">
+                            <f:facet name="header">
+                                <p:outputLabel value="Canchas"/>
+                            </f:facet>                        
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Descripción"/>
+                                </f:facet>
+                                <p:outputLabel value="#{canchas.descripcion}"/>
+                            </p:column>
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Dirección"/>
+                                </f:facet>
+                                <p:outputLabel value="#{canchas.direccion}"/>
+                            </p:column>
+
+
+                            <p:column exportable="false">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Acciones"/>
+                                </f:facet>                            
+                                <p:commandButton title="Actualizar" icon="ui-icon-pencil" oncomplete="wdlgEditarCancha.show()" 
+                                                 update=":dlgEditarCancha" process="@this">
+                                    <f:setPropertyActionListener value="#{canchas}" target="#{ctrlCancha.selCancha}"/>
+                                </p:commandButton>
+
+                                <p:commandButton title="Eliminar" icon="ui-icon-trash" oncomplete="wdlgEliminarCancha.show()" 
+                                                 update=":dlgEliminarCancha" process="@this">
+                                    <f:setPropertyActionListener value="#{canchas}" target="#{ctrlCancha.selCancha}"/>
+                                </p:commandButton>
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoCancha.show();"/>
+                                <h:commandLink>
+                                    <img src="../../resources/images/excel.png" alt=""/>
+                                    <p:dataExporter pageOnly="false" type="xls" fileName="Canchas" target="tblCanchas"/>
+                                </h:commandLink>
+
+                            </f:facet>
+
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">
+
+                <p:dialog id="dlgNuevoCancha" header="Nueva Cancha" widgetVar="wdlgNuevoCancha" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoCancha">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtDescripcion" for="txtDescripcion" value="Descripcion"/>
+                            <p:inputText id="txtDescripcion" value="#{ctrlCancha.objCancha.descripcion}" required="true" placeholder="Ej. Estadio Atahualpa"/>
+                            <p:outputLabel value="Dirección"/>
+                            <p:inputText value="#{ctrlCancha.objCancha.direccion}"/>                         
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlCancha.insertar()}" 
+                                         update=":frmCancha:pnlCanchas" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoCancha.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog> 
+
+                <p:dialog id="dlgEditarCancha" header="Editar Cancha" widgetVar="wdlgEditarCancha" 
+                          modal="true" closable="false" resizable="true" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEditarCancha">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:messages id="messages" autoUpdate="true"/>  
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Descripción:"/>
+                            <p:inputText value="#{ctrlCancha.selCancha.descripcion}"/>
+                            <p:outputLabel value="Dirección:"/>
+                            <p:inputText value="#{ctrlCancha.selCancha.direccion}"/>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Aceptar" action="#{ctrlCancha.editarCancha()}" 
+                                         update=":frmCancha:pnlCanchas"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarCancha.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog id="dlgEliminarCancha" header="Eliminar Cancha" widgetVar="wdlgEliminarCancha" 
+                          modal="true" closable="false" resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarCancha">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <h:outputText value="¿Desea Eliminar la Cancha?"/>
+                        <p:panelGrid id="pngEliminarCancha" columns="2">
+                            <h:outputText value="Descripción:"/>
+                            <h:outputText value="#{ctrlCancha.selCancha.descripcion}"/>
+
+                            <h:outputText value="Dirección:"/>
+                            <h:outputText value="#{ctrlCancha.selCancha.direccion}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlCancha.eliminarArbitro()}" 
+                                         update=":frmCancha:pnlCanchas"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarCancha.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

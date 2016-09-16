@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Posiciones
+            </ui:define>
+        </title>
+    </h:head>
+    <h:body>
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Posiciones
+            </ui:define>
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmPosicion">
+                    <p:panel id="pnlBusquedas">
+                        <p:outputLabel value="Búsquedas"/>
+                        <p:separator/>
+                        <p:panelGrid columns="4">
+                            <p:outputLabel value="Posicion:"/>
+                            <p:inputText value=" "/>
+                            <p:commandButton title="Buscar" icon="ui-icon-search" action=" "
+                                             update=" "/>
+                            <p:commandButton title="Limpiar" icon="ui-icon-clean" action=" }" 
+                                             update=" "/>
+                        </p:panelGrid>
+                        <p:panel id="pnlPosicion">                                            
+                            <p:dataTable id="tblPosicion" value="#{ctrlPosicion.lstPosicion}" var="posiciones" rows="5" paginator="true" 
+                                         selectionMode="single" selection="#{ctrlPosicion.selposicion}" rowKey="#{posiciones.idPosicion}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Posiciones"/>
+                                </f:facet>                        
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Pociones"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{posiciones.descripcion}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Codigo"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{posiciones.idPosicion}"/>
+                                </p:column>
+
+                                <p:column exportable="false">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Acciones"/>
+                                    </f:facet>                            
+                                    <p:commandButton title="Actualizar" icon="ui-icon-pencil" oncomplete="wdlgEditarPosicion.show()" 
+                                                     update=":dlgEditarPosicion" process="@this">
+                                        <f:setPropertyActionListener value="#{posiciones}" target="#{ctrlPosicion.selposicion}"/>
+                                    </p:commandButton>
+
+                                    <p:commandButton title="Eliminar" icon="ui-icon-trash" oncomplete="wdlgEliminarPosicion.show()" 
+                                                     update=":dlgEliminarPosicion" process="@this">
+                                        <f:setPropertyActionListener value="#{posiciones}" target="#{ctrlPosicion.selposicion}"/>
+                                    </p:commandButton>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoPosicion.show();"/>
+                                    <h:commandLink>
+                                        <img src="../../resources/images/excel.png" alt=""/>
+                                        <p:dataExporter pageOnly="false" type="xls" fileName="Posicion" target="tblPosicion"/>
+                                    </h:commandLink>
+                                </f:facet>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">
+                <p:dialog id="dlgNuevoPoosicion" header="Nuevo Posición" widgetVar="wdlgNuevoPosicion" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoPosicion">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtdescripcion" for="txtDescripcion" value="Descripcion"/>
+                            <p:inputText id="txtDescripcion" value="#{ctrlPosicion.objposicion.descripcion}" required="true" requiredMessage="Ingrese Posición del Jugador" placeholder="Ej. Delantero"/>                                                                                
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlPosicion.insertarPosicion()}" 
+                                         update=":frmPosicion:pnlPosicion" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoPosicion.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog> 
+
+                <p:dialog id="dlgEditarPosicion" header="Editar Posición" widgetVar="wdlgEditarPosicion" 
+                          modal="true" closable="false" resizable="true" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEditarPosicion">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:messages id="messages" autoUpdate="true"/>  
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Nombres:"/>
+                            <p:inputText value="#{ctrlPosicion.selposicion.descripcion}"/>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Aceptar" action="#{ctrlPosicion.editarPosicion()}" 
+                                         update=":frmPosicion:pnlPosicion"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarPosicion.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog id="dlgEliminarPosicion" header="Eliminar Posición" widgetVar="wdlgEliminarPosicion" 
+                          modal="true" closable="false" resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarPosicion">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <h:outputText value="¿Desea Eliminar el Posicion?"/>
+                        <p:panelGrid id="pngEliminarPosicion" columns="2">
+                            <h:outputText value="Descripcion:"/>
+                            <h:outputText value="#{ctrlPosicion.selposicion.descripcion}"/>
+
+                            <h:outputText value="Codigo:"/>
+                            <h:outputText value="#{ctrlPosicion.selposicion.idPosicion}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlPosicion.eliminarPosicion()}" 
+                                         update=":frmPosicion:pnlPosicion"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarPosicion.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>

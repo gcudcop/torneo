@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Grupos
+            </ui:define>
+        </title>
+    </h:head>
+
+    <h:body>
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Grupos
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmGrupo">
+                    <p:panel id="pnlBusquedas">
+                        <p:outputLabel value="Búsquedas"/>
+                        <p:separator/>
+                        <p:panelGrid columns="4">
+                            <p:outputLabel value="Nombre:"/>
+                            <p:inputText value="#{ctrlGrupo.criterioBusqueda}"/>
+                            <p:commandButton title="Buscar" icon="ui-icon-search" action="#{ctrlGrupo.obtenerGruposPorNombre()}"
+                                             update=":frmGrupo:pnlGrupos"/>
+                            <p:commandButton title="Limpiar" icon="ui-icon-clean" action="#{ctrlGrupo.obtenerGrupos()}" 
+                                             update=":frmGrupo:pnlGrupos"/>
+                        </p:panelGrid>
+
+                    </p:panel>
+                    <p:panel id="pnlGrupos">                                            
+                        <p:dataTable id="tblGrupos" value="#{ctrlGrupo.lstGrupos}" var="grupos" rows="5" paginator="true" 
+                                     selectionMode="single" selection="#{ctrlGrupo.selGrupo}" rowKey="#{grupos.idGrupo}">
+                            <f:facet name="header">
+                                <p:outputLabel value="Grupos"/>
+                            </f:facet>                        
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Nombre"/>
+                                </f:facet>
+                                <p:outputLabel value="#{grupos.nombreGrupo}"/>
+                            </p:column>
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Torneo"/>
+                                </f:facet>
+                                <p:outputLabel value="#{grupos.idTorneo.descripcion}"/>
+                            </p:column>
+
+
+                            <p:column exportable="false">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Acciones"/>
+                                </f:facet>                            
+                                <p:commandButton title="Actualizar" icon="ui-icon-pencil" oncomplete="wdlgEditarGrupo.show()" 
+                                                 update=":dlgEditarGrupo" process="@this">
+                                    <f:setPropertyActionListener value="#{grupos}" target="#{ctrlGrupo.selGrupo}"/>
+                                </p:commandButton>
+
+                                <p:commandButton title="Eliminar" icon="ui-icon-trash" oncomplete="wdlgEliminarGrupo.show()" 
+                                                 update=":dlgEliminarGrupo" process="@this">
+                                    <f:setPropertyActionListener value="#{grupos}" target="#{ctrlGrupo.selGrupo}"/>
+                                </p:commandButton>
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoGrupo.show();"/>
+                                <h:commandLink>
+                                    <img src="../../resources/images/excel.png" alt=""/>
+                                    <p:dataExporter pageOnly="false" type="xls" fileName="Grupos" target="tblGrupos"/>
+                                </h:commandLink>
+
+                            </f:facet>
+
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">
+
+                <p:dialog id="dlgNuevoGrupo" header="Nuevo Grupo" widgetVar="wdlgNuevoGrupo" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoGrupo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtNombre" for="txtNombre" value="Nombre"/>
+                            <p:inputText id="txtNombre" value="#{ctrlGrupo.objGrupo.nombreGrupo}" required="true" placeholder="Ej. Grupo A"/>
+                            
+                            <p:outputLabel value="Torneo" />
+                            <p:selectOneMenu id="txtTorneo" label="Torneo" requiredMessage="Ingrese el Torneo" value="#{ctrlGrupo.idTorneo}" required="true">
+                                <f:selectItem itemLabel="Seleccione un Torneo" noSelectionOption="true"/>
+                                <f:selectItems value="#{ctrlGrupo.lstTorneos}" var="torneo" itemLabel="#{torneo.descripcion}" itemValue="#{torneo.idTorneo}"/>
+                            </p:selectOneMenu>
+                                                    
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlGrupo.insertar()}" 
+                                         update=":frmGrupo:pnlGrupos" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoGrupo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog> 
+
+                <p:dialog id="dlgEditarGrupo" header="Editar Grupo" widgetVar="wdlgEditarGrupo" 
+                          modal="true" closable="false" resizable="true" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEditarGrupo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:messages id="messages" autoUpdate="true"/>  
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Nombre:"/>
+                            <p:inputText value="#{ctrlGrupo.selGrupo.nombreGrupo}"/>                         
+                          
+                          <p:outputLabel value="Torneo" />
+                          <p:selectOneMenu id="txtTorneo" label="Torneo" requiredMessage="Ingrese el Torneo" value="#{ctrlGrupo.idTorneo}" required="true">
+                                <f:selectItem itemLabel="Seleccione un Torneo" noSelectionOption="true"/>
+                                <f:selectItems value="#{ctrlGrupo.lstTorneos}" var="torneo" itemLabel="#{torneo.descripcion}" itemValue="#{torneo.idTorneo}"/>
+                            </p:selectOneMenu>
+                          
+                        </p:panelGrid>
+
+                        <p:commandButton value="Aceptar" action="#{ctrlGrupo.editarGrupo()}" 
+                                         update=":frmGrupo:pnlGrupos"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarGrupo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog id="dlgEliminarGrupo" header="Eliminar Grupo" widgetVar="wdlgEliminarGrupo" 
+                          modal="true" closable="false" resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarGrupo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <h:outputText value="¿Desea Eliminar el Grupo?"/>
+                        <p:panelGrid id="pngEliminarGrupo" columns="2">
+                            <h:outputText value="Nombre:"/>
+                            <h:outputText value="#{ctrlGrupo.selGrupo.nombreGrupo}"/>
+
+                            <h:outputText value="Torneo:"/>
+                            <h:outputText value="#{ctrlGrupo.selGrupo.idTorneo.descripcion}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlGrupo.eliminarGrupo()}" 
+                                         update=":frmGrupo:pnlGrupos"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarGrupo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

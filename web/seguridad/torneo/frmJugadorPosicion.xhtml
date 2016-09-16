@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml"
+       xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+       xmlns:ui="http://java.sun.com/jsf/facelets"
+       xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Jugador con sus Posiciónes
+            </ui:define>
+        </title>
+    </h:head>
+    <h:body>
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Jugadores con sus Posiciones
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmJugadorPosicion">
+                    <p:panel id="pnlBusquedas">
+                        <p:outputLabel value="Búsquedas"/>
+                        <p:separator/>
+                        <p:panelGrid columns="4">
+                            <p:outputLabel value="Posicion:"/>
+                            <p:inputText value=" "/>
+                            <p:commandButton title="Buscar" icon="ui-icon-search" action=" "
+                                             update=" "/>
+                            <p:commandButton title="Limpiar" icon="ui-icon-clean" action=" }" 
+                                             update=" "/>
+                        </p:panelGrid>
+                        <p:panel id="pnlJugadorPosicion">                                            
+                            <p:dataTable id="tblJugadorPosicion" value="#{ctrlJugadorPosicion.lstjugadorposicion}" var="jugadorposicion" rows="5" paginator="true" 
+                                         selectionMode="single" selection="#{ctrlJugadorPosicion.seljugadorposicion}" rowKey="#{jugadorposicion.idJugadorPosicion}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Jugador con su Posición"/>
+                                </f:facet>                        
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Nombres"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{jugadorposicion.idJugador.nombres} #{jugadorposicion.idJugador.apellidos}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Posición del Jugador"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{jugadorposicion.idPosicion.descripcion}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Dorsal del Jugador"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{jugadorposicion.dorsal}"/>
+                                </p:column>
+
+                                <p:column exportable="false">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Acciones"/>
+                                    </f:facet>                            
+                                    <p:commandButton title="Actualizar" icon="ui-icon-pencil" oncomplete="wdlgEditarJugadorPosicion.show()" 
+                                                     update=":frmEditarJugadorPosicion:pngJugadorPosicionEditar" process="@this">                                       
+                                        <f:setPropertyActionListener value="#{jugadorposicion}" target="#{ctrlJugadorPosicion.seljugadorposicion}"/>
+                                    </p:commandButton>
+
+                                    <p:commandButton title="Eliminar" icon="ui-icon-trash" oncomplete="wdlgEliminarJugadorPosicion.show()" 
+                                                     update=":frmEliminarJugadorPosicion" process="@this">
+                                        <f:setPropertyActionListener value="#{jugadorposicion}" target="#{ctrlJugadorPosicion.seljugadorposicion}"/>
+                                    </p:commandButton>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoJugadorPosicion.show();"
+                                                     update=":frmNuevoJugadorPosicion:pngNuevoJugadorPosicion"/>
+                                    <h:commandLink>
+                                        <img src="../../resources/images/excel.png" alt=""/>
+                                        <p:dataExporter pageOnly="false" type="xls" fileName="Posicion" target="tblPosicion"/>
+                                    </h:commandLink>
+                                </f:facet>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">
+                <p:dialog id="dlgNuevoJugadorPosicion" header="Nuevo Posiciones del Jugador" widgetVar="wdlgNuevoJugadorPosicion" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoJugadorPosicion">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panelGrid id="pngNuevoJugadorPosicion" columns="2">                              
+                            <p:outputLabel value="Seleccione Jugador"/>
+                            <p:selectOneMenu id="cmbJugador" value="#{ctrlJugadorPosicion.idjugador}">
+                                <f:selectItem itemLabel="Seleccione un Jugador" itemValue="#{null}"/>
+                                <f:selectItems value="#{ctrlJugadorPosicion.lstjugador}" var="jugadorposicion" 
+                                               itemLabel="#{jugadorposicion.apellidos}" itemValue="#{jugadorposicion.idJugador}"/>
+                            </p:selectOneMenu> 
+                            <p:outputLabel value="Seleccione Posición"/>
+                            <p:selectOneMenu id="cmbposicion" value="#{ctrlJugadorPosicion.idposicion}">
+                                <f:selectItem itemLabel="Seleccione un Posición" itemValue="#{null}"/>
+                                <f:selectItems value="#{ctrlJugadorPosicion.lstPosicion}" var="jugadorposicion" 
+                                               itemLabel="#{jugadorposicion.descripcion}" itemValue="#{jugadorposicion.idPosicion}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel id="otxtDorsal" for="txtDorsal" value="Dorsal"/>
+                            <p:inputText id="txtDorsal" value="#{ctrlJugadorPosicion.objjugardorposicion.dorsal}" required="true" placeholder="Ej. 11"/>
+
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlJugadorPosicion.insertarJugadorPosicion()}" 
+                                         update=":frmJugadorPosicion:pnlJugadorPosicion" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoJugadorPosicion.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog> 
+
+                <p:dialog id="dlgEditarJugadorPosicion" header="Edita Jugador Posiciones" widgetVar="wdlgEditarJugadorPosicion" modal="true" closable="false" 
+                          resizable="false" showEffect="clip" hideEffect="fold">
+                    <h:form id="frmEditarJugadorPosicion">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:messages id="messages" autoUpdate="true"/>  
+                        <p:panelGrid id="pngJugadorPosicionEditar" columns="2">
+
+                            <p:outputLabel value="Seleccione Jugador"/>
+                            <p:selectOneMenu id="cmbJugador" value="#{ctrlJugadorPosicion.seljugadorposicion.idJugador}">
+                                <f:selectItem itemLabel="Seleccione un Jugador" itemValue="#{null}"/>
+                                <f:selectItems value="#{ctrlJugadorPosicion.lstjugador}" var="jugadorposicionj" 
+                                               itemLabel="#{jugadorposicionj.apellidos}" itemValue="#{jugadorposicionj.idJugador}"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="Seleccione Posición"/>
+                            <p:selectOneMenu id="cmbposicion" value="#{ctrlJugadorPosicion.seljugadorposicion.idPosicion}">
+                                <f:selectItem itemLabel="Seleccione un Posición" itemValue="#{null}"/>
+                                <f:selectItems value="#{ctrlJugadorPosicion.lstPosicion}" var="jugadorposicion" 
+                                               itemLabel="#{jugadorposicion.descripcion}" itemValue="#{jugadorposicion.idPosicion}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel id="otxtDorsal" for="txtDorsal" value="Dorsal"/>
+                            <p:inputText id="txtDorsal" value="#{ctrlJugadorPosicion.seljugadorposicion.dorsal}" required="true" placeholder="Ej. 11"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlJugadorPosicion.actualizarJugadorPosicion()}" 
+                                         update=":frmJugadorPosicion:pnlJugadorPosicion"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarJugadorPosicion.hide()" type="reset"/>
+                    </h:form>
+
+                </p:dialog>  
+
+                <p:dialog id="dlgEliminarJugadorPosicion" header="Eliminar Jugador Posiciòn" widgetVar="wdlgEliminarJugadorPosicion" modal="true" closable="false" 
+                          resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarJugadorPosicion">
+
+                        <h:outputText value="¿Desea Eliminar Jugador Posiciòn?"/>
+                        <p:panelGrid id="pngPersonaTipoUsuarioEliminar" columns="2">
+                            <h:outputText value="Jugador"/>
+                            <h:outputText value="#{ctrlJugadorPosicion.seljugadorposicion.idJugador.apellidos}"/>
+                            <h:outputText value="Posicion"/>
+                            <h:outputText value="#{ctrlJugadorPosicion.seljugadorposicion.idPosicion.descripcion}"/>
+                            <h:outputText value="Dorsal"/>
+                            <h:outputText value="#{ctrlJugadorPosicion.seljugadorposicion.dorsal}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlJugadorPosicion.eliminarJugadorPosicion()}" update=":frmJugadorPosicion:pnlJugadorPosicion"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarJugadorPosicion.hide()" type="reset"/>
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>

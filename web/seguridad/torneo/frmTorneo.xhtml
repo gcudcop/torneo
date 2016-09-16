@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Arbitros
+            </ui:define>
+        </title>
+    </h:head>
+
+    <h:body>
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Torneos
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmTorneos">                   
+                    <p:panel id="pnlTorneos">
+                        <p:dataTable id="tblTorneos" value="#{ctrlTorneo.lstTorneos}" var="torneos" selectionMode="single" 
+                                     selection="#{ctrlTorneo.torneoSel}" rowKey="#{torneos.idTorneo}" paginator="true" rows="5">
+                            <f:facet name="header">
+                                <p:outputLabel value="GESTIÓN DE TORNEOS"/>    
+                            </f:facet>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Torneo"/>
+                                </f:facet>
+                                <p:outputLabel value="#{torneos.descripcion}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Año"/>
+                                </f:facet>
+                                <p:outputLabel value="#{torneos.anio}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Fecha de Inicio"/>
+                                </f:facet>
+                                <p:outputLabel value="#{torneos.fechaInicio}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Fecha de Finalización"/>
+                                </f:facet>
+                                <p:outputLabel value="#{torneos.fechaFin}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Auspiciante principal"/>
+                                </f:facet>
+                                <p:outputLabel value="#{torneos.auspiciante}"/>
+                            </p:column>
+
+                            <p:column exportable="false">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Acciones"/>
+                                </f:facet>
+                                <p:commandButton title="Editar" icon="ui-icon-pencil" oncomplete="wdlgEditarTorneo.show()" 
+                                                 update=":dlgEditarTorneo" process="@this">
+                                    <f:setPropertyActionListener value="#{torneos}" target="#{ctrlTorneo.torneoSel}"/>
+                                </p:commandButton>
+                                <p:commandButton title="Eliminar" icon="ui-icon-trash" oncomplete="wdlgEliminarTorneo.show()" 
+                                                 update=":dlgEliminarTorneo" process="@this">
+                                    <f:setPropertyActionListener value="#{torneos}" target="#{ctrlTorneo.torneoSel}"/>
+                                </p:commandButton>
+                            </p:column>
+                            <f:facet name="footer">     
+                                <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoTorneo.show();"/>
+                                <h:commandLink>
+                                    <img src="../../resources/images/excel.png" alt=""/>
+                                    <p:dataExporter pageOnly="false" type="xls" fileName="Torneos" target="tblTorneos"/>
+                                </h:commandLink>
+                            </f:facet>
+                        </p:dataTable>
+                    </p:panel>                                               
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">                
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+
+                <p:dialog id="dlgNuevoTorneo" header="Nuevo Torneo" widgetVar="wdlgNuevoTorneo" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoTorneo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtDescripcion" for="txtDescripcion" value="Descripción"/>
+                            <p:inputText id="txtDescripcion" value="#{ctrlTorneo.torneo.descripcion}" required="true" placeholder="Ej. Copa Libertadores"/>
+                            <p:outputLabel id="otxtAnio" for="txtAnio" value="Año de realización"/>
+                            <p:inputText id="txtAnio" value="#{ctrlTorneo.torneo.anio}" required="true"/>
+                            <p:outputLabel id="otxtFechaInicio" for="txtFechaInicio" value="Fecha de Inicio"/>
+                            <p:calendar id="txtFechaInicio" value="#{ctrlTorneo.fechaInicio}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+                            <p:outputLabel id="otxtFechaFin" for="txtFechaFin" value="Fecha de Inicio"/>
+                            <p:calendar id="txtFechaFin" value="#{ctrlTorneo.fechaFin}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+                            <p:outputLabel value="Auspiciante principal" id="oxtxAuspiciante" for="txtAuspiciante"/>
+                            <p:inputText id="txtAuspiciante" value="#{ctrlTorneo.torneo.auspiciante}" required="true" placeholder="Ej. Pilsener"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlTorneo.insertar()}" 
+                                         update=":frmTorneos:pnlTorneos" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoTorneo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog> 
+
+                <p:dialog id="dlgEditarTorneo" header="Editar Torneo" widgetVar="wdlgEditarTorneo" 
+                          modal="true" closable="false" resizable="true" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEditarTorneo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:messages id="messages" autoUpdate="true"/>  
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtDescripcion" for="txtDescripcion" value="Descripción"/>
+                            <p:inputText id="txtDescripcion" value="#{ctrlTorneo.torneoSel.descripcion}" required="true" placeholder="Ej. Copa Libertadores"/>
+                            <p:outputLabel id="otxtAnio" for="txtAnio" value="Año de realización"/>
+                            <p:inputText id="txtAnio" value="#{ctrlTorneo.torneoSel.anio}" required="true"/>
+                            <p:outputLabel id="otxtFechaInicio" for="txtFechaInicio" value="Fecha de Inicio"/>
+                            <p:calendar id="txtFechaInicio" value="#{ctrlTorneo.fechaInicio}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+                            <p:outputLabel id="otxtFechaFin" for="txtFechaFin" value="Fecha de Inicio"/>
+                            <p:calendar id="txtFechaFin" value="#{ctrlTorneo.fechaFin}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+                            <p:outputLabel value="Auspiciante principal" id="oxtxAuspiciante" for="txtAuspiciante"/>
+                            <p:inputText id="txtAuspiciante" value="#{ctrlTorneo.torneoSel.auspiciante}" required="true" placeholder="Ej. Pilsener"/>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Aceptar" action="#{ctrlTorneo.editar()}" 
+                                         update=":frmTorneos:pnlTorneos" />
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarTorneo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+                
+                <p:dialog id="dlgEliminarTorneo" header="Eliminar Torneo" widgetVar="wdlgEliminarTorneo" 
+                          modal="true" closable="false" resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarTorneo">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <h:outputText value="¿Desea Eliminar el siguiente torneo?"/>
+                        <p:panelGrid id="pngEliminarGraduado" columns="2">
+                            <h:outputText value="Torneo:"/>
+                            <h:outputText value="#{ctrlTorneo.torneoSel.descripcion} #{ctrlTorneo.torneoSel.anio}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlTorneo.eliminarTorneo()}" 
+                                         update=":frmTorneos:pnlTorneos" />
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarTorneo.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

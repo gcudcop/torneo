@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Arbitros
+            </ui:define>
+        </title>
+    </h:head>
+
+    <h:body>
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Arbitros
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmArbitro">
+                    <p:panel id="pnlBusquedas">
+                        <p:outputLabel value="Búsquedas"/>
+                        <p:separator/>
+                        <p:panelGrid columns="4">
+                            <p:outputLabel value="Nombre o Apellido:"/>
+                            <p:inputText value="#{ctrlArbitro.criterioBusqueda}"/>
+                            <p:commandButton title="Buscar" icon="ui-icon-search" action="#{ctrlArbitro.obtenerArbitrosPorNombre()}"
+                                             update=":frmArbitro:pnlArbitros"/>
+                            <p:commandButton title="Limpiar" icon="ui-icon-clean" action="#{ctrlArbitro.obtenerArbitros()}" 
+                                             update=":frmArbitro:pnlArbitros"/>
+                        </p:panelGrid>
+
+                    </p:panel>
+                    <p:panel id="pnlArbitros">                                            
+                        <p:dataTable id="tblArbitros" value="#{ctrlArbitro.lstArbitros}" var="arbitros" rows="5" paginator="true" 
+                                     selectionMode="single" selection="#{ctrlArbitro.selArbitro}" rowKey="#{arbitros.idArbitro}">
+                            <f:facet name="header">
+                                <p:outputLabel value="Arbitros"/>
+                            </f:facet>                        
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Nombres"/>
+                                </f:facet>
+                                <p:outputLabel value="#{arbitros.nombre}"/>
+                            </p:column>
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Apellidos"/>
+                                </f:facet>
+                                <p:outputLabel value="#{arbitros.apellido}"/>
+                            </p:column>
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Edad"/>
+                                </f:facet>
+                                <p:outputLabel value="#{arbitros.edad}"/>
+                            </p:column>
+
+                            <p:column exportable="false">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Acciones"/>
+                                </f:facet>                            
+                                <p:commandButton title="Actualizar" icon="ui-icon-pencil" oncomplete="wdlgEditarArbitro.show()" 
+                                                 update=":dlgEditarArbitro" process="@this">
+                                    <f:setPropertyActionListener value="#{arbitros}" target="#{ctrlArbitro.selArbitro}"/>
+                                </p:commandButton>
+
+                                <p:commandButton title="Eliminar" icon="ui-icon-trash" oncomplete="wdlgEliminarArbitro.show()" 
+                                                 update=":dlgEliminarArbitro" process="@this">
+                                    <f:setPropertyActionListener value="#{arbitros}" target="#{ctrlArbitro.selArbitro}"/>
+                                </p:commandButton>
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoArbitro.show();"/>
+                                <h:commandLink>
+                                    <img src="../../resources/images/excel.png" alt=""/>
+                                    <p:dataExporter pageOnly="false" type="xls" fileName="Arbitros" target="tblArbitros"/>
+                                </h:commandLink>
+
+                            </f:facet>
+
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">
+
+                <p:dialog id="dlgNuevoArbitro" header="Nuevo Arbitro" widgetVar="wdlgNuevoArbitro" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoArbitro">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtNombres" for="txtNombres" value="Nombres"/>
+                            <p:inputText id="txtNombres" value="#{ctrlArbitro.objArbitro.nombre}" required="true" placeholder="Ej. Geovanny"/>
+                            <p:outputLabel value="Apellidos"/>
+                            <p:inputText value="#{ctrlArbitro.objArbitro.apellido}"/>
+                            <p:outputLabel value="Edad"/>
+                            <p:inputText value="#{ctrlArbitro.objArbitro.edad}"/>                          
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlArbitro.insertar()}" 
+                                         update=":frmArbitro:pnlArbitros" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoArbitro.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog> 
+
+                <p:dialog id="dlgEditarArbitro" header="Editar Arbitro" widgetVar="wdlgEditarArbitro" 
+                          modal="true" closable="false" resizable="true" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEditarArbitro">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:messages id="messages" autoUpdate="true"/>  
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Nombres:"/>
+                            <p:inputText value="#{ctrlArbitro.selArbitro.nombre}"/>
+                            <p:outputLabel value="Apellidos:"/>
+                            <p:inputText value="#{ctrlArbitro.selArbitro.apellido}"/>
+                            <p:outputLabel value="Edad:"/>
+                            <p:inputText value="#{ctrlArbitro.selArbitro.edad}"/>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Aceptar" action="#{ctrlArbitro.editarArbitro()}" 
+                                         update=":frmArbitro:pnlArbitros"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarArbitro.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog id="dlgEliminarArbitro" header="Eliminar Arbitro" widgetVar="wdlgEliminarArbitro" 
+                          modal="true" closable="false" resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarArbitro">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <h:outputText value="¿Desea Eliminar el Arbitro?"/>
+                        <p:panelGrid id="pngEliminarGraduado" columns="2">
+                            <h:outputText value="Nombre:"/>
+                            <h:outputText value="#{ctrlArbitro.selArbitro.nombre}"/>
+
+                            <h:outputText value="Apellido:"/>
+                            <h:outputText value="#{ctrlArbitro.selArbitro.apellido}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlArbitro.eliminarArbitro()}" 
+                                         update=":frmArbitro:pnlArbitros"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarArbitro.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

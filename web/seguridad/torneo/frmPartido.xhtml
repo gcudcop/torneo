@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Arbitros
+            </ui:define>
+        </title>
+    </h:head>
+
+    <h:body>
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Partidos
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmPartidos">                   
+                    <p:panel id="pnlPartidos">
+                        <p:dataTable id="tblPartidos" value="#{ctrlPartido.lstPartido}" var="partidos" paginator="true" rows="5"
+                                     selectionMode="single" selection="#{ctrlPartido.partidoSel}" rowKey="#{partidos.idPartido}">
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Equipo 1"/>
+                                </f:facet>
+                                <p:outputLabel value="#{partidos.idEquipo1.nombre}"/>
+                            </p:column>
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Equipo 2"/>
+                                </f:facet>
+                                <p:outputLabel value="#{partidos.idEquipo2.nombre}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Escenario"/>
+                                </f:facet>
+                                <p:outputLabel value="#{partidos.idCancha.descripcion}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Arbitro"/>
+                                </f:facet>
+                                <p:outputLabel value="#{partidos.idArbitro.apellido} #{partidos.idArbitro.nombre}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Fecha"/>
+                                </f:facet>
+                                <p:outputLabel value="#{partidos.fecha}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Hora"/>
+                                </f:facet>
+                                <p:outputLabel value="#{partidos.hora}"/>
+                            </p:column>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <p:outputLabel value="Acciones"/>
+                                </f:facet>
+                                <p:commandButton title="Editar" icon="ui-icon-pencil" oncomplete="wdlgEditarPartido.show()" 
+                                                 update=":dlgEditarPartido" process="@this">
+                                    <f:setPropertyActionListener value="#{partidos}" target="#{ctrlPartido.partidoSel}"/>
+                                </p:commandButton>
+                                
+                                <p:commandButton icon="ui-icon-trash" title="Eliminar" oncomplete="wdlgEliminarPartido.show()" 
+                                                 update=":dlgEliminarPartido" process="@this">
+                                    <f:setPropertyActionListener value="#{partidos}" target="#{ctrlPartido.partidoSel}"/>
+                                </p:commandButton>
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoPartido.show();"/>
+                            </f:facet>
+
+                        </p:dataTable>                                     
+                    </p:panel>                                               
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">   
+
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+
+
+                <p:dialog id="dlgNuevoPartido" header="Nuevo Partido" widgetVar="wdlgNuevoPartido" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoPartido">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panel id="pnlNuevoPartido">
+                            <p:panelGrid columns="2">
+
+                                <p:outputLabel value="Seleccione el grupo:"/>
+                                <p:selectOneMenu id="cmbGrupo" value="#{ctrlPartido.idGrupo}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstGrupos}" var="grupos" itemLabel="#{grupos.nombreGrupo} #{grupos.idTorneo.descripcion}" 
+                                                   itemValue="#{grupos.idGrupo}"/>
+                                    <p:ajax event="change" listener="#{ctrlPartido.obtenerEquiposDadoId()}" update="cmbEquipo1, cmbEquipo2"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Primer equipo:"/>
+                                <p:selectOneMenu id="cmbEquipo1" value="#{ctrlPartido.idEquipo1}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstEquipos}" var="equipos" itemLabel="#{equipos.nombre}" 
+                                                   itemValue="#{equipos.idEquipo}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Segundo equipo:"/>
+                                <p:selectOneMenu id="cmbEquipo2" value="#{ctrlPartido.idEquipo2}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstEquipos}" var="equipos" itemLabel="#{equipos.nombre}" 
+                                                   itemValue="#{equipos.idEquipo}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Escenario:"/>
+                                <p:selectOneMenu id="cmbEscenario" value="#{ctrlPartido.idCancha}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstCancha}" var="cancha" itemLabel="#{cancha.descripcion}" 
+                                                   itemValue="#{cancha.idCancha}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Arbitro:"/>
+                                <p:selectOneMenu id="cmbArbitro" value="#{ctrlPartido.idArbitro}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstArbitro}" var="arbitro" itemLabel="#{arbitro.nombre} #{arbitro.apellido}" 
+                                                   itemValue="#{arbitro.idArbitro}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Fecha:"/>
+                                <p:calendar id="txtFecha" value="#{ctrlPartido.fecha}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+
+                                <p:outputLabel value="Hora:"/>
+                                <p:calendar id="time" value="#{ctrlPartido.hora}" pattern="HH:mm:ss" timeOnly="true" placeholder="HH:mm:ss"/>
+
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:commandButton value="Aceptar" action="#{ctrlPartido.insertar()}" 
+                                         update=":frmPartidos:pnlPartidos" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoPartido.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog id="dlgEliminarPartido" header="Eliminar Partido" widgetVar="wdlgEliminarPartido" 
+                          modal="true" closable="false" resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarPartido">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <h:outputText value="¿Desea Eliminar el siguiente Partido?"/>
+                        <p:panelGrid id="pngEliminarGraduado" columns="2">
+                            <h:outputText value="Partido:"/>
+                            <h:outputText value="#{ctrlPartido.partidoSel.idEquipo1.nombre} vs #{ctrlPartido.partidoSel.idEquipo2.nombre}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlPartido.eliminarPartido()}" 
+                                         update=":frmPartidos:pnlPartidos"  />
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarPartido.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog id="dlgEditarPartido" header="Editaro Partido" widgetVar="wdlgEditarPartido" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmEditarPartido">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panel id="pnlEditarPartido">
+                            <p:panelGrid columns="2">
+
+                                <p:outputLabel value="Seleccione el grupo:"/>
+                                <p:selectOneMenu id="cmbGrupo" value="#{ctrlPartido.idGrupo}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstGrupos}" var="grupos" itemLabel="#{grupos.nombreGrupo} #{grupos.idTorneo.descripcion}" 
+                                                   itemValue="#{grupos.idGrupo}"/>
+                                    <p:ajax event="change" listener="#{ctrlPartido.obtenerEquiposDadoId()}" update="cmbEquipo1, cmbEquipo2"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Primer equipo:"/>
+                                <p:selectOneMenu id="cmbEquipo1" value="#{ctrlPartido.idEquipo1}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstEquipos}" var="equipos" itemLabel="#{equipos.nombre}" 
+                                                   itemValue="#{equipos.idEquipo}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Segundo equipo:"/>
+                                <p:selectOneMenu id="cmbEquipo2" value="#{ctrlPartido.idEquipo2}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstEquipos}" var="equipos" itemLabel="#{equipos.nombre}" 
+                                                   itemValue="#{equipos.idEquipo}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Escenario:"/>
+                                <p:selectOneMenu id="cmbEscenario" value="#{ctrlPartido.idCancha}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstCancha}" var="cancha" itemLabel="#{cancha.descripcion}" 
+                                                   itemValue="#{cancha.idCancha}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Arbitro:"/>
+                                <p:selectOneMenu id="cmbArbitro" value="#{ctrlPartido.idArbitro}">
+                                    <f:selectItem itemLabel="--Elija una opción--" itemValue="#{null}"/>
+                                    <f:selectItems value="#{ctrlPartido.lstArbitro}" var="arbitro" itemLabel="#{arbitro.nombre} #{arbitro.apellido}" 
+                                                   itemValue="#{arbitro.idArbitro}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Fecha:"/>
+                                <p:calendar id="txtFecha" value="#{ctrlPartido.fecha}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+
+                                <p:outputLabel value="Hora:"/>
+                                <p:calendar id="time" value="#{ctrlPartido.hora}" pattern="HH:mm:ss" timeOnly="true" placeholder="HH:mm:ss"/>
+
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:commandButton value="Aceptar" action="#{ctrlPartido.editar()}" 
+                                         update=":frmPartidos:pnlPartidos" />
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarPartido.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+
+
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+
