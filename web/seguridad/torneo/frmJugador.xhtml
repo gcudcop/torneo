@@ -22,16 +22,7 @@
                 <p:growl autoUpdate="true" showDetail="true"/>
                 <h:form id="frmJugador">
                     <p:panel id="pnlBusquedas">
-                        <p:outputLabel value="Búsquedas"/>
-                        <p:separator/>
-                        <p:panelGrid columns="4">
-                            <p:outputLabel value="Posicion:"/>
-                            <p:inputText value=" "/>
-                            <p:commandButton title="Buscar" icon="ui-icon-search" action=" "
-                                             update=" "/>
-                            <p:commandButton title="Limpiar" icon="ui-icon-clean" action=" }" 
-                                             update=" "/>
-                        </p:panelGrid>
+                        
                         <p:panel id="pnlJugador">                                            
                             <p:dataTable id="tblJugador" value="#{ctrlJugador.lstjudor}" var="jugador" rows="5" paginator="true" 
                                          selectionMode="single" selection="#{ctrlJugador.selJugador}" rowKey="#{jugador.idJugador}">
