@@ -1,12 +1,190 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Facelet Title</title>
+        <title>
+            <ui:define name="tituloNavegador">
+                Gestión de Jugadores
+            </ui:define>
+        </title>
     </h:head>
     <h:body>
-        Hello from Facelets
+        <ui:composition template="../../templates/plantillaInternaCenter.xhtml">
+            <ui:define name="top">
+                Gestión de Jugadores
+            </ui:define>
+
+            <ui:define name="contenido">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <h:form id="frmJugador">
+                    <p:panel id="pnlBusquedas">
+                        <p:outputLabel value="Búsquedas"/>
+                        <p:separator/>
+                        <p:panelGrid columns="4">
+                            <p:outputLabel value="Posicion:"/>
+                            <p:inputText value=" "/>
+                            <p:commandButton title="Buscar" icon="ui-icon-search" action=" "
+                                             update=" "/>
+                            <p:commandButton title="Limpiar" icon="ui-icon-clean" action=" }" 
+                                             update=" "/>
+                        </p:panelGrid>
+                        <p:panel id="pnlJugador">                                            
+                            <p:dataTable id="tblJugador" value="#{ctrlJugador.lstjudor}" var="jugador" rows="5" paginator="true" 
+                                         selectionMode="single" selection="#{ctrlJugador.selJugador}" rowKey="#{jugador.idJugador}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Jugadores"/>
+                                </f:facet>                        
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Nombres"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{jugador.nombres}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Apellidos"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{jugador.apellidos}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Fecha de Nacimiento"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{jugador.fechaNacimiento}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Equipo"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{jugador.idEquipo.nombre}"/>
+                                </p:column>
+
+                                <p:column exportable="false">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Acciones"/>
+                                    </f:facet>                            
+                                    <p:commandButton title="Actualizar" icon="ui-icon-pencil" oncomplete="wdlgEditarJugador.show()" 
+                                                     update=":dlgEditarJugador" process="@this">
+                                        <f:setPropertyActionListener value="#{jugador}" target="#{ctrlJugador.selJugador}"/>
+                                    </p:commandButton>
+
+                                    <p:commandButton title="Eliminar" icon="ui-icon-trash" oncomplete="wdlgEliminarJugador.show()" 
+                                                     update=":dlgEliminarJugador" process="@this">
+                                        <f:setPropertyActionListener value="#{jugador}" target="#{ctrlJugador.selJugador}"/>
+                                    </p:commandButton>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton title="Nuevo" icon="ui-icon-plus"  onclick="wdlgNuevoJugador.show();"/>
+                                    <h:commandLink>
+                                        <img src="../../resources/images/excel.png" alt=""/>
+                                        <p:dataExporter pageOnly="false" type="xls" fileName="Posicion" target="tblPosicion"/>
+                                    </h:commandLink>
+                                </f:facet>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="dialogos">
+                <p:dialog id="dlgNuevoJugador" header="Nuevo Jugador" widgetVar="wdlgNuevoJugador" 
+                          modal="true" closable="false" resizable="false"
+                          showEffect="clip" hideEffect="fold"> 
+                    <h:form id="frmNuevoJugador">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtjugador" for="txtJugador" value="Nombres"/>
+                            <p:inputText id="txtJugador" value="#{ctrlJugador.objjugador.nombres}" required="true" 
+                                         requiredMessage="Ingrese Nombres del Jugador" placeholder="Ej. Diego"/>   
+                            <p:outputLabel id="otxtapellido" for="txtApellido" value="Apellidos"/>
+                            <p:inputText id="txtApellido" value="#{ctrlJugador.objjugador.apellidos}" required="true" 
+                                         requiredMessage="Ingrese Apellidos del Jugador" placeholder="Ej. Diego"/>
+
+
+
+                            <p:outputLabel value="Fecha de Nacimineto:"/>
+                            <p:calendar id="txtFecha" value="#{ctrlJugador.fecha}" locale="en" navigator="true" pattern="dd-MM-yyyy" required="true"/>
+
+                            <p:outputLabel value="Seleccione Jugador"/>
+                            <p:selectOneMenu id="cmbequipo" value="#{ctrlJugador.idequipo}">
+                                <f:selectItem itemLabel="Seleccione un Equipo" itemValue="#{null}"/>
+                                <f:selectItems value="#{ctrlJugador.lstequipo}" var="equipo" 
+                                               itemLabel="#{equipo.nombre}" itemValue="#{equipo.idEquipo}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlJugador.insertarJugador()}" 
+                                         update=":frmJugador:pnlJugador" />
+                        <p:commandButton value="Cancelar" onclick="wdlgNuevoJugador.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog> 
+
+                <p:dialog id="dlgEditarJugador" header="Editar Jugador" widgetVar="wdlgEditarJugador" 
+                          modal="true" closable="false" resizable="true" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEditarJugador">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <p:messages id="messages" autoUpdate="true"/>  
+                        <p:panelGrid columns="2">
+                            <p:outputLabel id="otxtjugador" for="txtJugador" value="Jugador"/>
+                            <p:inputText id="txtJugador" value="#{ctrlJugador.selJugador.nombres}" required="true" 
+                                         requiredMessage="Ingrese Nombres del Jugador" placeholder="Ej. Diego"/>   
+                            <p:outputLabel id="otxtapellido" for="txtApellido" value="apellido"/>
+                            <p:inputText id="txtApellido" value="#{ctrlJugador.selJugador.apellidos}" required="true" 
+                                         requiredMessage="Ingrese Apellidos del Jugador" placeholder="Ej. Diego"/>
+
+                            <p:outputLabel  value="Fecha de Nacimineto:" />
+                            <p:calendar id="txtfechanacimiento" value="#{ctrlJugador.fecha}" locale="de" 
+                                        navigator="true" pattern="yyyy-MMM-dd" />                           
+                            <p:outputLabel value="Seleccione Equipo"/>
+                            <p:selectOneMenu id="cmbequipo" value="#{ctrlJugador.idequipo}">
+                                <f:selectItem itemLabel="Seleccione un Equipo" itemValue="#{null}"/>
+                                <f:selectItems value="#{ctrlJugador.lstequipo}" var="equipo" 
+                                               itemLabel="#{equipo.nombre}" itemValue="#{equipo.idEquipo}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Aceptar" action="#{ctrlJugador.editarJugador()}" 
+                                         update=":frmJugador:pnlJugador"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEditarJugador.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog id="dlgEliminarJugador" header="Eliminar Jugador" widgetVar="wdlgEliminarJugador" 
+                          modal="true" closable="false" resizable="false" showEffect="clip" hideEffect="fold">  
+                    <h:form id="frmEliminarJugador">
+                        <p:ajaxStatus onstart="dlgStatus.show();" oncomplete="dlgStatus.hide();"/>
+                        <h:outputText value="¿Desea Eliminar el El Jugador?"/>
+                        <p:panelGrid id="pngEliminarPosicion" columns="2">
+                            <h:outputText value="Nombres:"/>
+                            <h:outputText value="#{ctrlJugador.selJugador.nombres}"/>
+
+                            <h:outputText value="Apellidos:"/>
+                            <h:outputText value="#{ctrlJugador.selJugador.apellidos}"/>
+
+                            <h:outputText value="Fecha de Nacimiento:"/>
+                            <h:outputText value="#{ctrlJugador.selJugador.fechaNacimiento}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Aceptar" action="#{ctrlJugador.eliminarJugador()}" 
+                                         update=":frmJugador:pnlJugador"/>
+                        <p:commandButton value="Cancelar" onclick="wdlgEliminarJugador.hide()" type="reset"/>
+                    </h:form> 
+                </p:dialog>
+
+                <p:dialog modal="true" widgetVar="dlgStatus" header="Procesando" draggable="false" closable="false" 
+                          resizable="false"> 
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />  
+                </p:dialog>
+
+            </ui:define>
+
+
+
+        </ui:composition>
     </h:body>
 </html>
 
